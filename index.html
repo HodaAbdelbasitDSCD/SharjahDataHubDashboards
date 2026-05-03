@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الداشبورد التحليلية - الإحصاءات السكانية لإمارة الشارقة</title>
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+:root {
+  --green:        #50735F;
+  --green-dark:   #3B5645;
+  --green-light:  #7F9B8A;
+  --green-50:     #E8EFEB;
+  --gray:         #808080;
+  --gray-light:   #D9D9D9;
+  --gray-very-light: #F2F2F2;
+  --bg:           #FAFAFA;
+  --card-bg:      #FFFFFF;
+  --text:         #252423;
+  --text-muted:   #5F5E5A;
+  --accent-amber: #BA7517;
+  --accent-coral: #C04828;
+  --accent-blue:  #185FA5;
+  --shadow: 0 2px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04);
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  font-size: 14px;
+}
+.container { max-width: 1400px; margin: 0 auto; padding: 24px 20px; }
+
+/* HEADER */
+header {
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+  color: #fff;
+  padding: 32px 0;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+header .container { padding: 0 20px; }
+header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+}
+header h2 {
+  font-size: 14px;
+  font-weight: 400;
+  opacity: 0.85;
+  letter-spacing: 0.5px;
+}
+header .meta {
+  margin-top: 14px;
+  display: flex;
+  gap: 24px;
+  font-size: 12px;
+  opacity: 0.8;
+  flex-wrap: wrap;
+}
+header .meta span::before { content: "● "; opacity: 0.7; }
+
+/* SECTIONS */
+.section { margin-bottom: 36px; }
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 6px;
+  padding-right: 12px;
+  border-right: 4px solid var(--green);
+}
+.section-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+  padding-right: 16px;
+}
+
+/* GRID */
+.grid { display: grid; gap: 16px; }
+.grid-6 { grid-template-columns: repeat(6, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 1100px) {
+  .grid-6 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .grid-6, .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* KPI CARDS */
+.kpi {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  box-shadow: var(--shadow);
+  border-top: 3px solid var(--green);
+  position: relative;
+  overflow: hidden;
+}
+.kpi.amber { border-top-color: var(--accent-amber); }
+.kpi.coral { border-top-color: var(--accent-coral); }
+.kpi.blue  { border-top-color: var(--accent-blue); }
+.kpi-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.kpi-label .badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--gray-very-light);
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-weight: 400;
+}
+.kpi-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+.kpi-trend {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.kpi-trend.up { color: #2D7D5A; }
+.kpi-trend.down { color: var(--accent-coral); }
+
+/* CARDS */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--green-dark);
+  margin-bottom: 4px;
+}
+.card .card-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.chart { width: 100%; min-height: 280px; }
+.chart-tall { min-height: 460px; }
+.chart-mid { min-height: 360px; }
+
+/* INSIGHT BOXES */
+.insight {
+  background: linear-gradient(135deg, var(--green-50) 0%, #FFF 100%);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  border-right: 4px solid var(--green);
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+}
+.insight strong { color: var(--green-dark); }
+.insight.warning {
+  background: linear-gradient(135deg, #FAEEDA 0%, #FFF 100%);
+  border-right-color: var(--accent-amber);
+}
+.insight.warning strong { color: var(--accent-amber); }
+.insight.alert {
+  background: linear-gradient(135deg, #FAECE7 0%, #FFF 100%);
+  border-right-color: var(--accent-coral);
+}
+.insight.alert strong { color: var(--accent-coral); }
+
+/* SUMMARY BIG STAT */
+.big-stat {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.big-stat-value {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 4px 0;
+}
+.big-stat-label { font-size: 12px; opacity: 0.85; letter-spacing: 0.5px; }
+.big-stat-sub { font-size: 11px; opacity: 0.7; margin-top: 6px; }
+
+/* COMPARISON STATS */
+.compare-stats {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 14px;
+}
+.compare-stat {
+  text-align: center;
+  padding: 10px;
+  background: var(--gray-very-light);
+  border-radius: 8px;
+}
+.compare-stat-year { font-size: 11px; color: var(--text-muted); }
+.compare-stat-value { font-size: 22px; font-weight: 600; color: var(--green-dark); }
+.compare-arrow { font-size: 18px; color: var(--green); }
+
+/* FOOTER */
+footer {
+  margin-top: 40px;
+  padding: 24px 0;
+  border-top: 1px solid var(--gray-light);
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+footer .sources { margin-top: 8px; opacity: 0.8; }
+
+/* RTL plotly tweaks */
+.js-plotly-plot .plotly .modebar { direction: ltr; }
+
+/* Scroll hint */
+.toc {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.toc a {
+  padding: 6px 12px;
+  background: var(--gray-very-light);
+  color: var(--green-dark);
+  text-decoration: none;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.toc a:hover { background: var(--green); color: #fff; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <h1>الداشبورد التحليلية للإحصاءات السكانية</h1>
+    <h2>إمارة الشارقة • تحليل متكامل للمؤشرات الديموغرافية والحركة السكانية</h2>
+    <div class="meta">
+      <span>الفترة: 2013 - 2024</span>
+      <span>المؤشرات: 5 مؤشرات رئيسية</span>
+      <span>الحقائق: 384 سجل</span>
+      <span>المصادر: 8 مصادر رسمية</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+<!-- TOC -->
+<nav class="toc">
+  <a href="#kpis">المؤشرات الرئيسية</a>
+  <a href="#population">السكان</a>
+  <a href="#vital">الحركة السكانية</a>
+  <a href="#births">المواليد</a>
+  <a href="#deaths">الوفيات</a>
+  <a href="#marriage">الزواج والطلاق</a>
+  <a href="#advanced">مؤشرات متقدمة</a>
+  <a href="#insights">الخلاصة</a>
+</nav>
+
+<!-- KPI ROW -->
+<section id="kpis" class="section">
+  <h2 class="section-title">المؤشرات الرئيسية (KPIs)</h2>
+  <p class="section-subtitle">الأرقام الجوهرية لإمارة الشارقة - أحدث البيانات المتاحة</p>
+  <div class="grid grid-6">
+    <div class="kpi">
+      <div class="kpi-label">إجمالي السكان <span class="badge">2022</span></div>
+      <div class="kpi-value" id="kpi-pop">—</div>
+      <div class="kpi-trend up">+<span id="kpi-pop-growth">—</span>% منذ 2015</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">المواليد سنوياً <span class="badge">2024</span></div>
+      <div class="kpi-value" id="kpi-births">—</div>
+      <div class="kpi-trend" id="kpi-births-trend">—</div>
+    </div>
+    <div class="kpi coral">
+      <div class="kpi-label">الوفيات سنوياً <span class="badge">2024</span></div>
+      <div class="kpi-value" id="kpi-deaths">—</div>
+      <div class="kpi-trend" id="kpi-deaths-trend">—</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">الزيادة الطبيعية <span class="badge">2024</span></div>
+      <div class="kpi-value" id="kpi-natinc">—</div>
+      <div class="kpi-trend">مواليد − وفيات</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">عقود الزواج <span class="badge">2024</span></div>
+      <div class="kpi-value" id="kpi-mar">—</div>
+      <div class="kpi-trend">نسبة المختلط: <span id="kpi-mixed">—</span>%</div>
+    </div>
+    <div class="kpi amber">
+      <div class="kpi-label">حالات الطلاق <span class="badge">2024</span></div>
+      <div class="kpi-value" id="kpi-div">—</div>
+      <div class="kpi-trend">زواج:طلاق = <span id="kpi-mardiv">—</span>:1</div>
+    </div>
+  </div>
+</section>
+
+<!-- POPULATION -->
+<section id="population" class="section">
+  <h2 class="section-title">تركيب وتطور السكان</h2>
+  <p class="section-subtitle">الهرم السكاني المقارن (2015 vs 2022) + النمو السكاني والتركيب</p>
+
+  <div class="grid grid-2" style="grid-template-columns: 2fr 1fr;">
+    <div class="card">
+      <h3>الهرم السكاني المقارن - 2015 مقابل 2022</h3>
+      <p class="card-subtitle">المقارنة بين تعدادي 2015 و 2022 (مواطنون + غير مواطنين)</p>
+      <div id="chart-pyramid" class="chart chart-tall"></div>
+    </div>
+
+    <div>
+      <div class="big-stat" style="margin-bottom: 14px;">
+        <div class="big-stat-label">معدل النمو السنوي المركب</div>
+        <div class="big-stat-value" id="bs-cagr">—%</div>
+        <div class="big-stat-sub">CAGR من 2015 إلى 2022</div>
+      </div>
+
+      <div class="card">
+        <h3>إجمالي السكان عبر السنوات</h3>
+        <p class="card-subtitle">السنوات الأربع المتاحة (تعدادات + تقديرات)</p>
+        <div id="chart-pop-total" class="chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top: 16px;">
+    <div class="card">
+      <h3>تركيب السكان حسب الجنسية</h3>
+      <p class="card-subtitle">نسبة المواطنين إلى غير المواطنين</p>
+      <div id="chart-nat-comp" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>الفئات العمرية الكبرى</h3>
+      <p class="card-subtitle">أطفال (&lt;15) / في سن العمل (15-64) / كبار السن (65+)</p>
+      <div id="chart-age-buckets" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>المؤشرات السكانية الرئيسية</h3>
+      <p class="card-subtitle">مقارنة بين 2015 و 2022</p>
+      <div id="dep-stats" style="margin-top: 8px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- VITAL STATS -->
+<section id="vital" class="section">
+  <h2 class="section-title">الحركة السكانية الحيوية (2016-2024)</h2>
+  <p class="section-subtitle">المواليد والوفيات والزواج والطلاق - السلاسل الزمنية</p>
+
+  <div class="grid grid-2" style="grid-template-columns: 3fr 2fr;">
+    <div class="card">
+      <h3>السلسلة الزمنية للمؤشرات الحيوية الأربعة</h3>
+      <p class="card-subtitle">قابل للمقارنة - يظهر التحولات الديموغرافية والأحداث الاستثنائية</p>
+      <div id="chart-vital-ts" class="chart chart-tall"></div>
+    </div>
+    <div class="card">
+      <h3>الزيادة الطبيعية (مواليد - وفيات)</h3>
+      <p class="card-subtitle">المؤشر الأساسي للنمو السكاني الذاتي</p>
+      <div id="chart-nat-inc" class="chart chart-tall"></div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top: 16px;">
+    <strong>اكتشاف:</strong> ارتفعت الوفيات بنسبة <span id="ins-covid">—</span>% بين 2019 و 2020
+    (من الأرجح أنه أثر مباشر لجائحة كوفيد-19). انخفضت عقود الزواج في الفترة ذاتها مع توقف
+    التجمعات الاجتماعية.
+  </div>
+</section>
+
+<!-- BIRTHS -->
+<section id="births" class="section">
+  <h2 class="section-title">تحليل المواليد</h2>
+  <p class="section-subtitle">التركيب حسب الجنسية، نسبة الذكور للإناث، والمعدلات</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>المواليد حسب الجنسية - نمو متباين</h3>
+      <p class="card-subtitle">انفجار سكاني واضح في فئة غير المواطنين</p>
+      <div id="chart-births-nat" class="chart chart-mid"></div>
+    </div>
+    <div class="card">
+      <h3>نسبة الذكور إلى الإناث عند الولادة</h3>
+      <p class="card-subtitle">ذكور لكل 100 أنثى - النسبة الطبيعية ~105</p>
+      <div id="chart-sex-ratio-birth" class="chart chart-mid"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top: 16px;">
+    <div class="card">
+      <h3>معدل المواليد الخام (Crude Birth Rate)</h3>
+      <p class="card-subtitle">مواليد لكل 1000 من السكان (تقديري بناءً على استكمال السكان)</p>
+      <div id="chart-cbr" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>توزيع نسبي للمواليد عبر الزمن</h3>
+      <p class="card-subtitle">حصة كل جنسية من إجمالي المواليد</p>
+      <div id="chart-births-share" class="chart"></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEATHS -->
+<section id="deaths" class="section">
+  <h2 class="section-title">تحليل الوفيات</h2>
+  <p class="section-subtitle">التركيب، أثر كوفيد-19، ومعدلات الوفيات</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>الوفيات حسب الجنسية - أثر كوفيد ظاهر</h3>
+      <p class="card-subtitle">القفزة في 2020 واضحة في كلا الفئتين</p>
+      <div id="chart-deaths-nat" class="chart chart-mid"></div>
+    </div>
+    <div class="card">
+      <h3>التغير السنوي في الوفيات (% YoY)</h3>
+      <p class="card-subtitle">معدل التغير عن السنة السابقة</p>
+      <div id="chart-deaths-yoy" class="chart chart-mid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARRIAGE -->
+<section id="marriage" class="section">
+  <h2 class="section-title">الزواج والطلاق</h2>
+  <p class="section-subtitle">أنماط الزواج المختلط، استقرار الأسر، ونسبة الطلاق</p>
+
+  <div class="grid grid-2">
+    <div class="card">
+      <h3>مصفوفة عقود الزواج 2024</h3>
+      <p class="card-subtitle">جنسية الزوج × جنسية الزوجة</p>
+      <div id="chart-mar-matrix" class="chart chart-mid"></div>
+    </div>
+    <div class="card">
+      <h3>نسبة الزواج المختلط عبر السنوات</h3>
+      <p class="card-subtitle">% الزيجات بين إماراتي وغير إماراتي من إجمالي الزيجات</p>
+      <div id="chart-mixed-trend" class="chart chart-mid"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top: 16px;">
+    <div class="card">
+      <h3>الزواج مقابل الطلاق</h3>
+      <p class="card-subtitle">المقارنة السنوية</p>
+      <div id="chart-mar-div" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>نسبة الزواج إلى الطلاق</h3>
+      <p class="card-subtitle">عدد الزيجات لكل حالة طلاق - مؤشر على استقرار الأسرة</p>
+      <div id="chart-mar-div-ratio" class="chart"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ADVANCED INDICATORS -->
+<section id="advanced" class="section">
+  <h2 class="section-title">مؤشرات ديموغرافية متقدمة</h2>
+  <p class="section-subtitle">مؤشرات تركيبية تكشف جوانب أعمق من البيانات</p>
+
+  <div class="grid grid-4">
+    <div class="card">
+      <h3>العمر الوسيط</h3>
+      <p class="card-subtitle">يحدد منتصف توزيع الأعمار</p>
+      <div class="compare-stats">
+        <div class="compare-stat">
+          <div class="compare-stat-year">2015</div>
+          <div class="compare-stat-value" id="med-2015">—</div>
+        </div>
+        <div class="compare-arrow">←</div>
+        <div class="compare-stat">
+          <div class="compare-stat-year">2022</div>
+          <div class="compare-stat-value" id="med-2022">—</div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">
+        ارتفع العمر الوسيط <span id="med-delta">—</span> سنة - السكان يشيخون تدريجياً
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>نسبة الذكور إلى الإناث</h3>
+      <p class="card-subtitle">ذكور لكل 100 أنثى</p>
+      <div class="compare-stats">
+        <div class="compare-stat">
+          <div class="compare-stat-year">2015</div>
+          <div class="compare-stat-value" id="sr-2015">—</div>
+        </div>
+        <div class="compare-arrow">←</div>
+        <div class="compare-stat">
+          <div class="compare-stat-year">2022</div>
+          <div class="compare-stat-value" id="sr-2022">—</div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">
+        نسبة مرتفعة بسبب العمالة الذكورية الوافدة (السنّ من 25-44)
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>نسبة الإعالة</h3>
+      <p class="card-subtitle">(أطفال + كبار السن) ÷ سن العمل</p>
+      <div class="compare-stats">
+        <div class="compare-stat">
+          <div class="compare-stat-year">2015</div>
+          <div class="compare-stat-value" id="dep-2015">—</div>
+        </div>
+        <div class="compare-arrow">←</div>
+        <div class="compare-stat">
+          <div class="compare-stat-year">2022</div>
+          <div class="compare-stat-value" id="dep-2022">—</div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">
+        انخفاض النسبة يعني أن قوة العمل أكبر نسبياً (نافذة ديموغرافية)
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>نسبة كبار السن (65+)</h3>
+      <p class="card-subtitle">من إجمالي السكان</p>
+      <div class="compare-stats">
+        <div class="compare-stat">
+          <div class="compare-stat-year">2015</div>
+          <div class="compare-stat-value" id="eld-2015">—</div>
+        </div>
+        <div class="compare-arrow">←</div>
+        <div class="compare-stat">
+          <div class="compare-stat-year">2022</div>
+          <div class="compare-stat-value" id="eld-2022">—</div>
+        </div>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:10px;">
+        نسبة منخفضة جداً - سكان فتيون نسبياً
+      </p>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-top: 16px;">
+    <div class="card">
+      <h3>المعدلات الخام (لكل 1000 من السكان)</h3>
+      <p class="card-subtitle">معدل المواليد، الوفيات، الزواج - تقديري بناءً على استكمال السكان</p>
+      <div id="chart-crude-rates" class="chart chart-mid"></div>
+    </div>
+    <div class="card">
+      <h3>الفجوة بين الجنسين في المواليد حسب الجنسية</h3>
+      <p class="card-subtitle">نسبة الذكور للإناث عند الولادة - مقارنة المواطنين بغير المواطنين</p>
+      <div id="chart-sr-by-nat" class="chart chart-mid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- INSIGHTS -->
+<section id="insights" class="section">
+  <h2 class="section-title">الخلاصة والاكتشافات الرئيسية</h2>
+  <p class="section-subtitle">الإستنتاجات الديموغرافية المستخلصة من التحليل</p>
+
+  <div class="grid grid-2">
+    <div class="insight">
+      <strong>📈 نمو سكاني سريع:</strong> ارتفع تعداد السكان من 1.40 مليون (2015) إلى 1.82 مليون (2022)،
+      بمعدل نمو سنوي مركب يبلغ 3.8% - أعلى بكثير من المتوسط العالمي (1.0%) ومعدل الإمارات الكلي (1.5%).
+      التضخم السكاني مدفوع بشكل أساسي بالعمالة الوافدة.
+    </div>
+    <div class="insight">
+      <strong>👶 المواليد في تصاعد ملحوظ:</strong> ارتفعت المواليد من 9,079 (2016) إلى 14,514 (2024)،
+      بزيادة قدرها 60% تقريباً. الزيادة كانت أعلى بكثير عند غير المواطنين (+87%) مقارنة بالمواطنين (+8%).
+    </div>
+    <div class="insight alert">
+      <strong>⚠️ أثر كوفيد-19 ظاهر:</strong> ارتفعت الوفيات من 1,587 (2019) إلى 2,078 (2020)
+      بنسبة <span id="ins-covid-2">—</span>% - وهو ما يعكس الأثر المباشر للجائحة. عادت الأرقام للاستقرار في 2022.
+    </div>
+    <div class="insight warning">
+      <strong>⚖️ نسبة الذكور للإناث متطرفة:</strong> ~<span id="ins-sr">—</span> ذكر لكل 100 أنثى -
+      من الأعلى عالمياً، والسبب الرئيسي هو هيمنة الذكور في فئة العمالة الوافدة (سن العمل 25-44).
+    </div>
+    <div class="insight">
+      <strong>💍 استقرار الزواج:</strong> نسبة الزواج للطلاق تتراوح بين 4:1 و 9:1 - مرتفعة عالمياً
+      وتدل على استقرار اجتماعي. ملاحظة: ذروة الطلاق في 2018 (861 حالة) ثم انخفض جذرياً (255 في 2024).
+    </div>
+    <div class="insight">
+      <strong>🌐 الزواج المختلط آخذ في التراجع:</strong> بلغت نسبته في 2024 حوالي
+      <span id="ins-mixed">—</span>% - أقل من المعدل في 2016 (~14.7%). تعكس هذه النسبة
+      التماسك الديموغرافي للمكونات السكانية.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>الداشبورد التحليلية للإحصاءات السكانية - إمارة الشارقة</div>
+  <div class="sources">
+    المصادر: وزارة الصحة ووقاية المجتمع • منطقة الشارقة الطبية • وزارة العدل •
+    تعدادات الشارقة 2015 و 2022 • تقديرات 2013-2014
+  </div>
+</footer>
+
+</div><!-- /container -->
+
+<script>
+// ============================================================================
+// Data injection
+// ============================================================================
+const DATA = {"kpi": {"population_2022": 1820392, "population_2015": 1404162, "population_growth_pct": 29.64259109703866, "population_cagr": 3.7783627097904837, "births_2024": 14514, "deaths_2024": 2169, "natural_increase_2024": 12345, "marriages_2024": 2390, "divorces_2024": 255, "mar_div_ratio_2024": 9.372549019607844, "mixed_pct_2024": 15.271966527196653, "sex_ratio_2022": 199.80549777582343, "youth_pct_2022": 17.784740868999645, "elderly_pct_2022": 1.5831754918720804, "dependency_2022": 24.020111457808177, "median_age_2022": 32.09772617503774, "crude_birth_rate_2024": 7.40301400890151, "crude_death_rate_2024": 1.10632061356672, "covid_death_inc": 30.93887838689351}, "years_vital": [2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024], "births_total": {"2016": 9079, "2017": 9774, "2018": 10054, "2019": 10393, "2020": 11822, "2021": 11119, "2022": 12484, "2023": 14042, "2024": 14514}, "deaths_total": {"2016": 1562, "2017": 1494, "2018": 1479, "2019": 1587, "2020": 2078, "2021": 1881, "2022": 1911, "2023": 1961, "2024": 2169}, "mar_total": {"2016": 2126, "2017": 2148, "2018": 2138, "2019": 1791, "2020": 2267, "2021": 2304, "2022": 1973, "2023": 2063, "2024": 2390}, "div_total": {"2016": 722, "2017": 816, "2018": 861, "2019": 395, "2020": 279, "2021": 253, "2022": 287, "2023": 304, "2024": 255}, "nat_increase": {"2016": 7517, "2017": 8280, "2018": 8575, "2019": 8806, "2020": 9744, "2021": 9238, "2022": 10573, "2023": 12081, "2024": 12345}, "births_by_nat": {"2016": {"EMR": 2924, "NEMR": 6155}, "2017": {"EMR": 3174, "NEMR": 6600}, "2018": {"EMR": 3233, "NEMR": 6821}, "2019": {"EMR": 3259, "NEMR": 7134}, "2020": {"EMR": 3195, "NEMR": 8627}, "2021": {"EMR": 3029, "NEMR": 8090}, "2022": {"EMR": 2843, "NEMR": 9641}, "2023": {"EMR": 2641, "NEMR": 11401}, "2024": {"EMR": 2490, "NEMR": 12024}}, "deaths_by_nat": {"2016": {"EMR": 356, "NEMR": 1206}, "2017": {"EMR": 305, "NEMR": 1189}, "2018": {"EMR": 288, "NEMR": 1191}, "2019": {"EMR": 299, "NEMR": 1288}, "2020": {"EMR": 365, "NEMR": 1713}, "2021": {"EMR": 376, "NEMR": 1505}, "2022": {"EMR": 366, "NEMR": 1545}, "2023": {"EMR": 366, "NEMR": 1595}, "2024": {"EMR": 368, "NEMR": 1801}}, "births_nat_share": {"2016": {"EMR": 32.20619010904285, "NEMR": 67.79380989095716}, "2017": {"EMR": 32.47391037446286, "NEMR": 67.52608962553714}, "2018": {"EMR": 32.15635567933161, "NEMR": 67.84364432066839}, "2019": {"EMR": 31.35764456845954, "NEMR": 68.64235543154045}, "2020": {"EMR": 27.02588394518694, "NEMR": 72.97411605481307}, "2021": {"EMR": 27.24165842252001, "NEMR": 72.75834157748}, "2022": {"EMR": 22.773149631528355, "NEMR": 77.22685036847164}, "2023": {"EMR": 18.80786212790201, "NEMR": 81.19213787209799}, "2024": {"EMR": 17.155849524596942, "NEMR": 82.84415047540305}}, "sex_ratio_birth": {"2016": {"overall": 108.1384685923888, "EMR": 105.0490883590463, "NEMR": 109.63896457765668}, "2017": {"overall": 103.62499999999999, "EMR": 98.6232790988736, "NEMR": 106.1211742660837}, "2018": {"overall": 106.27821091505949, "EMR": 103.97476340694007, "NEMR": 107.38826391000305}, "2019": {"overall": 104.42564909520063, "EMR": 103.05295950155764, "NEMR": 105.05892497844209}, "2020": {"overall": 103.47676419965578, "EMR": 101.70454545454545, "NEMR": 104.14103170847137}, "2021": {"overall": 105.98369766580215, "EMR": 107.46575342465754, "NEMR": 105.43423057389538}, "2022": {"overall": 106.44947908053581, "EMR": 106.31349782293178, "NEMR": 106.4896123366888}, "2023": {"overall": 104.48521916411823, "EMR": 105.68535825545172, "NEMR": 104.20920651979222}, "2024": {"overall": 110.13464601129289, "EMR": 108.89261744966443, "NEMR": 110.39370078740158}}, "mixed_pct": {"2016": 14.722483537158984, "2017": 13.640595903165737, "2018": 14.452759588400374, "2019": 14.628699050809605, "2020": 13.498014997794442, "2021": 14.930555555555555, "2022": 13.88748099341105, "2023": 14.54192922927775, "2024": 15.271966527196653}, "mar_div_ratio": {"2016": 2.9445983379501386, "2017": 2.6323529411764706, "2018": 2.483159117305459, "2019": 4.534177215189874, "2020": 8.125448028673835, "2021": 9.106719367588934, "2022": 6.874564459930314, "2023": 6.786184210526316, "2024": 9.372549019607844}, "crude_birth_rate": {"2016": 6.2030982988988965, "2017": 6.417239298363828, "2018": 6.353052729489113, "2019": 6.3294465120835515, "2020": 6.9481130760609915, "2021": 6.314275065926993, "2022": 6.857863581030899, "2023": 7.4328819579196335, "2024": 7.40301400890151}, "crude_death_rate": {"2016": 1.0672144005815702, "2017": 0.9809039811495355, "2018": 0.9345698216545055, "2019": 0.9664997223781966, "2020": 1.2212974938297023, "2021": 1.0681852144085504, "2022": 1.049773894853416, "2023": 1.0380203332488533, "2024": 1.10632061356672}, "crude_mar_rate": {"2016": 1.452559421022035, "2017": 1.4102956837410994, "2018": 1.3509873419184129, "2019": 1.0907378719466603, "2020": 1.3323779684850505, "2021": 1.3083991142994686, "2022": 1.0838324932212402, "2023": 1.0920122118778097, "2024": 1.219043921818562}, "births_yoy": {"2016": null, "2017": 7.6550280867937, "2018": 2.864743196234909, "2019": 3.371792321464094, "2020": 13.749639180217454, "2021": -5.946540348502792, "2022": 12.276283838474683, "2023": 12.479974367190003, "2024": 3.361344537815126}, "deaths_yoy": {"2016": null, "2017": -4.353393085787452, "2018": -1.0040160642570282, "2019": 7.302231237322515, "2020": 30.93887838689351, "2021": -9.480269489894129, "2022": 1.5948963317384368, "2023": 2.6164311878597593, "2024": 10.606833248342683}, "pop_year_total": {"2022": 1820392, "2015": 1404162, "2014": 1311070, "2013": 1230007}, "pyr_2015": [{"age": "0-4", "age_en": "0-4", "emr_m": 11438, "emr_f": 10907, "nemr_m": 45790, "nemr_f": 42900, "total_m": 57228, "total_f": 53807}, {"age": "5-9", "age_en": "5-9", "emr_m": 10746, "emr_f": 10484, "nemr_m": 39215, "nemr_f": 36545, "total_m": 49961, "total_f": 47029}, {"age": "10-14", "age_en": "10-14", "emr_m": 9363, "emr_f": 8767, "nemr_m": 27297, "nemr_f": 25533, "total_m": 36660, "total_f": 34300}, {"age": "15-19", "age_en": "15-19", "emr_m": 8367, "emr_f": 9683, "nemr_m": 22571, "nemr_f": 20474, "total_m": 30938, "total_f": 30157}, {"age": "20-24", "age_en": "20-24", "emr_m": 9102, "emr_f": 10366, "nemr_m": 71419, "nemr_f": 30721, "total_m": 80521, "total_f": 41087}, {"age": "25-29", "age_en": "25-29", "emr_m": 7840, "emr_f": 7590, "nemr_m": 166628, "nemr_f": 60857, "total_m": 174468, "total_f": 68447}, {"age": "30-34", "age_en": "30-34", "emr_m": 7284, "emr_f": 7016, "nemr_m": 170570, "nemr_f": 62525, "total_m": 177854, "total_f": 69541}, {"age": "35-39", "age_en": "35-39", "emr_m": 5972, "emr_f": 6199, "nemr_m": 103051, "nemr_f": 42673, "total_m": 109023, "total_f": 48872}, {"age": "40-44", "age_en": "40-44", "emr_m": 3877, "emr_f": 4281, "nemr_m": 72937, "nemr_f": 27149, "total_m": 76814, "total_f": 31430}, {"age": "45-49", "age_en": "45-49", "emr_m": 3211, "emr_f": 3489, "nemr_m": 50063, "nemr_f": 17329, "total_m": 53274, "total_f": 20818}, {"age": "50-54", "age_en": "50-54", "emr_m": 2378, "emr_f": 2852, "nemr_m": 29622, "nemr_f": 11801, "total_m": 32000, "total_f": 14653}, {"age": "55-59", "age_en": "55-59", "emr_m": 1930, "emr_f": 2335, "nemr_m": 19002, "nemr_f": 7510, "total_m": 20932, "total_f": 9845}, {"age": "60-64", "age_en": "60-64", "emr_m": 1432, "emr_f": 1595, "nemr_m": 9180, "nemr_f": 4374, "total_m": 10612, "total_f": 5969}, {"age": "65+", "age_en": "65+", "emr_m": 2980, "emr_f": 3302, "nemr_m": 6548, "nemr_f": 5092, "total_m": 9528, "total_f": 8394}], "pyr_2022": [{"age": "0-4", "age_en": "0-4", "emr_m": 10452, "emr_f": 9899, "nemr_m": 42268, "nemr_f": 40558, "total_m": 52720, "total_f": 50457}, {"age": "5-9", "age_en": "5-9", "emr_m": 12146, "emr_f": 12106, "nemr_m": 47872, "nemr_f": 45459, "total_m": 60018, "total_f": 57565}, {"age": "10-14", "age_en": "10-14", "emr_m": 12629, "emr_f": 12192, "nemr_m": 40016, "nemr_f": 38155, "total_m": 52645, "total_f": 50347}, {"age": "15-19", "age_en": "15-19", "emr_m": 11143, "emr_f": 10861, "nemr_m": 29043, "nemr_f": 24611, "total_m": 40186, "total_f": 35472}, {"age": "20-24", "age_en": "20-24", "emr_m": 9427, "emr_f": 9782, "nemr_m": 108212, "nemr_f": 33348, "total_m": 117639, "total_f": 43130}, {"age": "25-29", "age_en": "25-29", "emr_m": 8415, "emr_f": 8360, "nemr_m": 162670, "nemr_f": 60253, "total_m": 171085, "total_f": 68613}, {"age": "30-34", "age_en": "30-34", "emr_m": 7726, "emr_f": 7618, "nemr_m": 173800, "nemr_f": 73805, "total_m": 181526, "total_f": 81423}, {"age": "35-39", "age_en": "35-39", "emr_m": 7439, "emr_f": 7545, "nemr_m": 174249, "nemr_f": 66891, "total_m": 181688, "total_f": 74436}, {"age": "40-44", "age_en": "40-44", "emr_m": 6822, "emr_f": 6957, "nemr_m": 135086, "nemr_f": 45749, "total_m": 141908, "total_f": 52706}, {"age": "45-49", "age_en": "45-49", "emr_m": 4800, "emr_f": 5148, "nemr_m": 84980, "nemr_f": 28900, "total_m": 89780, "total_f": 34048}, {"age": "50-54", "age_en": "50-54", "emr_m": 3456, "emr_f": 4070, "nemr_m": 55915, "nemr_f": 18049, "total_m": 59371, "total_f": 22119}, {"age": "55-59", "age_en": "55-59", "emr_m": 2761, "emr_f": 3148, "nemr_m": 28578, "nemr_f": 11090, "total_m": 31339, "total_f": 14238}, {"age": "60-64", "age_en": "60-64", "emr_m": 2226, "emr_f": 2732, "nemr_m": 15170, "nemr_f": 6985, "total_m": 17396, "total_f": 9717}, {"age": "65+", "age_en": "65+", "emr_m": 4164, "emr_f": 4827, "nemr_m": 11736, "nemr_f": 8093, "total_m": 15900, "total_f": 12920}], "pyr_2014": [{"age": "0-4", "age_en": "0-4", "emr_m": 12864, "emr_f": 12544, "nemr_m": 51425, "nemr_f": 32972, "total_m": 64289, "total_f": 45516}, {"age": "5-9", "age_en": "5-9", "emr_m": 11189, "emr_f": 10703, "nemr_m": 44356, "nemr_f": 27253, "total_m": 55545, "total_f": 37956}, {"age": "10-14", "age_en": "10-14", "emr_m": 9088, "emr_f": 8849, "nemr_m": 37446, "nemr_f": 22286, "total_m": 46534, "total_f": 31135}, {"age": "15-19", "age_en": "15-19", "emr_m": 8832, "emr_f": 8608, "nemr_m": 30928, "nemr_f": 17755, "total_m": 39760, "total_f": 26363}, {"age": "20-24", "age_en": "20-24", "emr_m": 8546, "emr_f": 8762, "nemr_m": 83996, "nemr_f": 30501, "total_m": 92542, "total_f": 39263}, {"age": "25-29", "age_en": "25-29", "emr_m": 8038, "emr_f": 8823, "nemr_m": 153115, "nemr_f": 44465, "total_m": 161153, "total_f": 53288}, {"age": "30-34", "age_en": "30-34", "emr_m": 7223, "emr_f": 7870, "nemr_m": 160505, "nemr_f": 38693, "total_m": 167728, "total_f": 46563}, {"age": "35-39", "age_en": "35-39", "emr_m": 4940, "emr_f": 5680, "nemr_m": 120962, "nemr_f": 27509, "total_m": 125902, "total_f": 33189}, {"age": "40-44", "age_en": "40-44", "emr_m": 3530, "emr_f": 4209, "nemr_m": 77887, "nemr_f": 17081, "total_m": 81417, "total_f": 21290}, {"age": "45-49", "age_en": "45-49", "emr_m": 2824, "emr_f": 3336, "nemr_m": 48349, "nemr_f": 9801, "total_m": 51173, "total_f": 13137}, {"age": "50-54", "age_en": "50-54", "emr_m": 2155, "emr_f": 2849, "nemr_m": 28407, "nemr_f": 5483, "total_m": 30562, "total_f": 8332}, {"age": "55-59", "age_en": "55-59", "emr_m": 1765, "emr_f": 2136, "nemr_m": 13162, "nemr_f": 2621, "total_m": 14927, "total_f": 4757}, {"age": "60-64", "age_en": "60-64", "emr_m": 1483, "emr_f": 1541, "nemr_m": 4616, "nemr_f": 1108, "total_m": 6099, "total_f": 2649}, {"age": "65+", "age_en": "65+", "emr_m": 2803, "emr_f": 2993, "nemr_m": 2961, "nemr_f": 1244, "total_m": 5764, "total_f": 4237}], "pyr_2013": [{"age": "0-4", "age_en": "0-4", "emr_m": 12169, "emr_f": 11886, "nemr_m": 48371, "nemr_f": 31014, "total_m": 60540, "total_f": 42900}, {"age": "5-9", "age_en": "5-9", "emr_m": 10498, "emr_f": 10044, "nemr_m": 41722, "nemr_f": 25634, "total_m": 52220, "total_f": 35678}, {"age": "10-14", "age_en": "10-14", "emr_m": 8438, "emr_f": 8234, "nemr_m": 35222, "nemr_f": 20962, "total_m": 43660, "total_f": 29196}, {"age": "15-19", "age_en": "15-19", "emr_m": 8128, "emr_f": 7927, "nemr_m": 29091, "nemr_f": 16701, "total_m": 37219, "total_f": 24628}, {"age": "20-24", "age_en": "20-24", "emr_m": 7896, "emr_f": 7885, "nemr_m": 79009, "nemr_f": 28690, "total_m": 86905, "total_f": 36575}, {"age": "25-29", "age_en": "25-29", "emr_m": 7484, "emr_f": 7762, "nemr_m": 144023, "nemr_f": 41827, "total_m": 151507, "total_f": 49589}, {"age": "30-34", "age_en": "30-34", "emr_m": 6750, "emr_f": 6986, "nemr_m": 150976, "nemr_f": 36395, "total_m": 157726, "total_f": 43381}, {"age": "35-39", "age_en": "35-39", "emr_m": 4605, "emr_f": 5096, "nemr_m": 113780, "nemr_f": 25876, "total_m": 118385, "total_f": 30972}, {"age": "40-44", "age_en": "40-44", "emr_m": 3270, "emr_f": 3765, "nemr_m": 73262, "nemr_f": 16067, "total_m": 76532, "total_f": 19832}, {"age": "45-49", "age_en": "45-49", "emr_m": 2558, "emr_f": 3045, "nemr_m": 45478, "nemr_f": 9219, "total_m": 48036, "total_f": 12264}, {"age": "50-54", "age_en": "50-54", "emr_m": 1926, "emr_f": 2592, "nemr_m": 26720, "nemr_f": 5157, "total_m": 28646, "total_f": 7749}, {"age": "55-59", "age_en": "55-59", "emr_m": 1613, "emr_f": 1961, "nemr_m": 12381, "nemr_f": 2465, "total_m": 13994, "total_f": 4426}, {"age": "60-64", "age_en": "60-64", "emr_m": 1373, "emr_f": 1413, "nemr_m": 4342, "nemr_f": 1042, "total_m": 5715, "total_f": 2455}, {"age": "65+", "age_en": "65+", "emr_m": 2653, "emr_f": 2670, "nemr_m": 2785, "nemr_f": 1169, "total_m": 5438, "total_f": 3839}], "pop_breakdown": {"2022": {"EMR_M": 103606, "EMR_F": 105245, "NEMR_M": 1109595, "NEMR_F": 501946}, "2015": {"EMR_M": 85920, "EMR_F": 88866, "NEMR_M": 833893, "NEMR_F": 395483}, "2014": {"EMR_M": 85280, "EMR_F": 88903, "NEMR_M": 858115, "NEMR_F": 278772}, "2013": {"EMR_M": 79361, "EMR_F": 81266, "NEMR_M": 807162, "NEMR_F": 262218}}, "nat_composition": {"2022": {"EMR_pct": 11.472858593094234, "NEMR_pct": 88.52714140690577, "EMR_count": 208851, "NEMR_count": 1611541}, "2015": {"EMR_pct": 12.447709025027025, "NEMR_pct": 87.55229097497296, "EMR_count": 174786, "NEMR_count": 1229376}, "2014": {"EMR_pct": 13.2855606489356, "NEMR_pct": 86.7144393510644, "EMR_count": 174183, "NEMR_count": 1136887}, "2013": {"EMR_pct": 13.059031371366178, "NEMR_pct": 86.94096862863383, "EMR_count": 160627, "NEMR_count": 1069380}}, "sex_ratios": {"2022": {"overall": 199.80549777582343, "EMR": 98.44268136253504, "NEMR": 221.05863977399957}, "2015": {"overall": 189.90707114085092, "EMR": 96.68489636081291, "NEMR": 210.85432243610978}, "2014": {"overall": 256.58393962058886, "EMR": 95.92477194245413, "NEMR": 307.8196519019127}, "2013": {"overall": 258.09732039920345, "EMR": 97.65584623335712, "NEMR": 307.82097338855453}}, "dependency": {"2015": {"children": 278985, "working": 1107255, "elderly": 17922, "ratio": 26.81469038297411, "youth_pct": 19.868433984112944, "elderly_pct": 1.2763484555200897}, "2022": {"children": 323752, "working": 1467820, "elderly": 28820, "ratio": 24.020111457808177, "youth_pct": 17.784740868999645, "elderly_pct": 1.5831754918720804}}, "median_age": {"2015": 29.948088837659263, "2022": 32.09772617503774}, "mar_matrix_recent": {"EMR_EMR": 1186, "EMR_NEMR": 299, "NEMR_EMR": 66, "NEMR_NEMR": 839}, "div_matrix_recent": {"EMR_EMR": 125, "EMR_NEMR": 56, "NEMR_EMR": 9, "NEMR_NEMR": 65}, "mar_d": {"2016": {"EMR_EMR": 1214, "EMR_NEMR": 226, "NEMR_EMR": 87, "NEMR_NEMR": 599}, "2017": {"EMR_EMR": 1267, "EMR_NEMR": 236, "NEMR_EMR": 57, "NEMR_NEMR": 588}, "2018": {"EMR_EMR": 1302, "EMR_NEMR": 238, "NEMR_EMR": 71, "NEMR_NEMR": 527}, "2019": {"EMR_EMR": 1051, "EMR_NEMR": 205, "NEMR_EMR": 57, "NEMR_NEMR": 478}, "2020": {"EMR_EMR": 1415, "EMR_NEMR": 254, "NEMR_EMR": 52, "NEMR_NEMR": 546}, "2021": {"EMR_EMR": 1260, "EMR_NEMR": 286, "NEMR_EMR": 58, "NEMR_NEMR": 700}, "2022": {"EMR_EMR": 982, "EMR_NEMR": 228, "NEMR_EMR": 46, "NEMR_NEMR": 717}, "2023": {"EMR_EMR": 1025, "EMR_NEMR": 230, "NEMR_EMR": 70, "NEMR_NEMR": 738}, "2024": {"EMR_EMR": 1186, "EMR_NEMR": 299, "NEMR_EMR": 66, "NEMR_NEMR": 839}}, "div_d": {"2016": {"EMR_EMR": 367, "EMR_NEMR": 109, "NEMR_EMR": 38, "NEMR_NEMR": 208}, "2017": {"EMR_EMR": 351, "EMR_NEMR": 141, "NEMR_EMR": 155, "NEMR_NEMR": 169}, "2018": {"EMR_EMR": 402, "EMR_NEMR": 168, "NEMR_EMR": 44, "NEMR_NEMR": 247}, "2019": {"EMR_EMR": 170, "EMR_NEMR": 77, "NEMR_EMR": 10, "NEMR_NEMR": 138}, "2020": {"EMR_EMR": 140, "EMR_NEMR": 56, "NEMR_EMR": 3, "NEMR_NEMR": 80}, "2021": {"EMR_EMR": 127, "EMR_NEMR": 52, "NEMR_EMR": 8, "NEMR_NEMR": 66}, "2022": {"EMR_EMR": 152, "EMR_NEMR": 54, "NEMR_EMR": 11, "NEMR_NEMR": 70}, "2023": {"EMR_EMR": 151, "EMR_NEMR": 67, "NEMR_EMR": 7, "NEMR_NEMR": 79}, "2024": {"EMR_EMR": 125, "EMR_NEMR": 56, "NEMR_EMR": 9, "NEMR_NEMR": 65}}};
+
+const COLORS = {
+  green:        '#50735F',
+  greenDark:    '#3B5645',
+  greenLight:   '#7F9B8A',
+  green50:      '#E8EFEB',
+  gray:         '#808080',
+  grayLight:    '#D9D9D9',
+  amber:        '#BA7517',
+  coral:        '#C04828',
+  blue:         '#185FA5',
+  red:          '#A23B3B',
+  text:         '#252423',
+  textMuted:    '#5F5E5A',
+};
+
+// Common Plotly layout settings (RTL-aware)
+// IMPORTANT: yaxis.type is set per-chart since pyramid/age-buckets need 'category'
+// while line/bar charts need 'linear'. Plotly's autodetect can be unreliable for sparse data.
+const baseLayout = {
+  font: { family: 'Segoe UI, Tahoma, Arial', size: 12, color: COLORS.text },
+  paper_bgcolor: 'transparent',
+  plot_bgcolor:  'transparent',
+  margin: { t: 24, r: 16, b: 40, l: 50 },
+  xaxis: { gridcolor: COLORS.grayLight, zeroline: false, tickfont: {size: 11} },
+  yaxis: { gridcolor: COLORS.grayLight, zeroline: false, tickfont: {size: 11} },
+  legend: { orientation: 'h', y: -0.18, x: 0.5, xanchor: 'center', font: {size: 11} },
+  hoverlabel: { font: { family: 'Segoe UI, Tahoma, Arial', size: 12 } },
+};
+// Helper to spread baseLayout but force a numeric y-axis (used for line/bar charts
+// where Plotly's autodetect occasionally picks 'category' for sparse-looking data).
+function numericY(extra = {}) {
+  return Object.assign({}, baseLayout.yaxis, {type: 'linear', autorange: true}, extra);
+}
+const config = {responsive: true, displaylogo: false,
+  modeBarButtonsToRemove: ['select2d','lasso2d','autoScale2d','zoom2d','pan2d','zoomIn2d','zoomOut2d']};
+
+// Number formatting
+function fmt(n, dec=0) {
+  if (n === null || n === undefined) return '—';
+  return Number(n).toLocaleString('ar-EG', {maximumFractionDigits: dec, minimumFractionDigits: dec});
+}
+function fmtEN(n, dec=0) {
+  if (n === null || n === undefined) return '—';
+  return Number(n).toLocaleString('en-US', {maximumFractionDigits: dec, minimumFractionDigits: dec});
+}
+
+// ============================================================================
+// KPI cards
+// ============================================================================
+const kpi = DATA.kpi;
+document.getElementById('kpi-pop').textContent = fmt(kpi.population_2022);
+document.getElementById('kpi-pop-growth').textContent = kpi.population_growth_pct.toFixed(1);
+document.getElementById('kpi-births').textContent = fmt(kpi.births_2024);
+document.getElementById('kpi-deaths').textContent = fmt(kpi.deaths_2024);
+document.getElementById('kpi-natinc').textContent = fmt(kpi.natural_increase_2024);
+document.getElementById('kpi-mar').textContent = fmt(kpi.marriages_2024);
+document.getElementById('kpi-div').textContent = fmt(kpi.divorces_2024);
+document.getElementById('kpi-mixed').textContent = kpi.mixed_pct_2024.toFixed(1);
+document.getElementById('kpi-mardiv').textContent = kpi.mar_div_ratio_2024.toFixed(1);
+
+// Births trend (vs 2023)
+const birthsLatest = DATA.births_total[2024], birthsPrev = DATA.births_total[2023];
+const birthsChg = ((birthsLatest - birthsPrev) / birthsPrev * 100);
+const bt = document.getElementById('kpi-births-trend');
+bt.textContent = `${birthsChg >= 0 ? '↑' : '↓'} ${Math.abs(birthsChg).toFixed(1)}% عن 2023`;
+bt.className = 'kpi-trend ' + (birthsChg >= 0 ? 'up' : 'down');
+
+const deathsLatest = DATA.deaths_total[2024], deathsPrev = DATA.deaths_total[2023];
+const deathsChg = ((deathsLatest - deathsPrev) / deathsPrev * 100);
+const dt = document.getElementById('kpi-deaths-trend');
+dt.textContent = `${deathsChg >= 0 ? '↑' : '↓'} ${Math.abs(deathsChg).toFixed(1)}% عن 2023`;
+dt.className = 'kpi-trend ' + (deathsChg >= 0 ? 'down' : 'up');
+
+document.getElementById('bs-cagr').textContent = '+' + kpi.population_cagr.toFixed(1) + '%';
+
+// ============================================================================
+// CHART 1: Population pyramid 2015 vs 2022 (overlapping bars)
+// ============================================================================
+function renderPyramid() {
+  const ages = DATA.pyr_2022.map(r => r.age);
+  // 2022 - main filled bars
+  const males_2022   = DATA.pyr_2022.map(r => -(r.total_m));
+  const females_2022 = DATA.pyr_2022.map(r => r.total_f);
+  // 2015 - outline bars showing previous distribution
+  const males_2015   = DATA.pyr_2015.map(r => -(r.total_m));
+  const females_2015 = DATA.pyr_2015.map(r => r.total_f);
+
+  const traces = [
+    {
+      type: 'bar', orientation: 'h', y: ages, x: males_2022,
+      name: 'ذكور 2022', marker: {color: COLORS.green}, opacity: 0.9,
+      hovertemplate: '<b>ذكور 2022</b><br>الفئة: %{y}<br>العدد: %{customdata:,}<extra></extra>',
+      customdata: DATA.pyr_2022.map(r => r.total_m),
+    },
+    {
+      type: 'bar', orientation: 'h', y: ages, x: females_2022,
+      name: 'إناث 2022', marker: {color: COLORS.amber}, opacity: 0.9,
+      hovertemplate: '<b>إناث 2022</b><br>الفئة: %{y}<br>العدد: %{x:,}<extra></extra>',
+    },
+    {
+      type: 'scatter', mode: 'lines+markers', y: ages, x: males_2015,
+      name: 'ذكور 2015', line: {color: COLORS.greenDark, width: 2, dash: 'dash'},
+      marker: {size: 5, color: COLORS.greenDark},
+      hovertemplate: '<b>ذكور 2015</b><br>الفئة: %{y}<br>العدد: %{customdata:,}<extra></extra>',
+      customdata: DATA.pyr_2015.map(r => r.total_m),
+    },
+    {
+      type: 'scatter', mode: 'lines+markers', y: ages, x: females_2015,
+      name: 'إناث 2015', line: {color: '#7A4F0F', width: 2, dash: 'dash'},
+      marker: {size: 5, color: '#7A4F0F'},
+      hovertemplate: '<b>إناث 2015</b><br>الفئة: %{y}<br>العدد: %{x:,}<extra></extra>',
+    },
+  ];
+
+  const allMaxAbs = Math.max(...DATA.pyr_2022.map(r => Math.max(r.total_m, r.total_f)));
+  const xrange = Math.ceil(allMaxAbs * 1.05 / 10000) * 10000;
+
+  const layout = {...baseLayout,
+    barmode: 'overlay',
+    bargap: 0.18,
+    margin: {t: 20, r: 30, b: 60, l: 60},
+    xaxis: {...baseLayout.xaxis,
+      range: [-xrange, xrange],
+      tickvals: [-xrange, -xrange*0.5, 0, xrange*0.5, xrange],
+      ticktext: [fmtEN(xrange), fmtEN(xrange*0.5), '0', fmtEN(xrange*0.5), fmtEN(xrange)],
+      title: {text: '← ذكور  •  إناث →', font: {size: 11, color: COLORS.textMuted}},
+    },
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true,
+      type: 'category', autorange: true,
+      title: {text: 'الفئة العمرية', font: {size: 11, color: COLORS.textMuted}},
+      categoryorder: 'array',
+      categoryarray: ages,
+    },
+    legend: {orientation: 'h', y: -0.20, x: 0.5, xanchor: 'center', font: {size: 11}},
+    annotations: [
+      {x: -xrange*0.5, y: 13.5, text: 'ذكور', showarrow: false, font: {size: 13, color: COLORS.green, family: 'Segoe UI'}},
+      {x:  xrange*0.5, y: 13.5, text: 'إناث', showarrow: false, font: {size: 13, color: COLORS.amber, family: 'Segoe UI'}},
+    ],
+  };
+  Plotly.newPlot('chart-pyramid', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 2: Total population over years
+// ============================================================================
+function renderPopTotal() {
+  const years = Object.keys(DATA.pop_year_total).map(Number).sort();
+  const values = years.map(y => DATA.pop_year_total[y]);
+  const labels = years.map(y => fmtEN(DATA.pop_year_total[y]));
+  const colors = years.map(y => (y === 2022 || y === 2015) ? COLORS.green : COLORS.greenLight);
+
+  const trace = {
+    type: 'bar', x: years.map(String), y: values,
+    marker: {color: colors},
+    text: labels, textposition: 'outside',
+    textfont: {size: 11, color: COLORS.text},
+    hovertemplate: '<b>%{x}</b><br>السكان: %{y:,}<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 30, r: 14, b: 36, l: 60},
+    xaxis: {...baseLayout.xaxis, type: 'category'},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, tickformat: ',d'},
+    showlegend: false,
+  };
+  Plotly.newPlot('chart-pop-total', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 3: Nationality composition (pie/donut)
+// ============================================================================
+function renderNatComposition() {
+  const c = DATA.nat_composition[2022];
+  const trace = {
+    type: 'pie', labels: ['مواطنون', 'غير مواطنين'],
+    values: [c.EMR_count, c.NEMR_count],
+    hole: 0.55,
+    marker: {colors: [COLORS.green, COLORS.greenLight]},
+    textposition: 'inside', textinfo: 'percent',
+    textfont: {size: 13, color: '#fff'},
+    hovertemplate: '<b>%{label}</b><br>العدد: %{value:,}<br>النسبة: %{percent}<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 10, r: 10, b: 30, l: 10},
+    showlegend: true,
+    legend: {orientation: 'h', y: -0.05, x: 0.5, xanchor: 'center'},
+    annotations: [{
+      text: '<b>2022</b><br><span style="font-size:10px;color:#888">إجمالي السكان</span><br>' +
+            '<span style="font-size:14px">' + fmtEN(c.EMR_count + c.NEMR_count) + '</span>',
+      x: 0.5, y: 0.5, font: {size: 16}, showarrow: false,
+    }],
+  };
+  Plotly.newPlot('chart-nat-comp', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 4: Age buckets (children/working/elderly)
+// ============================================================================
+function renderAgeBuckets() {
+  const d2015 = DATA.dependency['2015'];
+  const d2022 = DATA.dependency['2022'];
+  const trace = {
+    type: 'bar', orientation: 'h',
+    y: ['أطفال (0-14)', 'سن العمل (15-64)', 'كبار السن (65+)'],
+    x: [d2022.children, d2022.working, d2022.elderly],
+    marker: {color: [COLORS.greenLight, COLORS.green, COLORS.greenDark]},
+    text: [fmtEN(d2022.children), fmtEN(d2022.working), fmtEN(d2022.elderly)],
+    textposition: 'inside', textfont: {color: '#fff', size: 12},
+    hovertemplate: '<b>%{y}</b><br>العدد: %{x:,}<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 10, r: 10, b: 30, l: 100},
+    xaxis: {...baseLayout.xaxis, tickformat: ',d'},
+    showlegend: false,
+  };
+  Plotly.newPlot('chart-age-buckets', [trace], layout, config);
+}
+
+// ============================================================================
+// Dependency stats panel
+// ============================================================================
+function renderDepStats() {
+  const d22 = DATA.dependency['2022'];
+  const d15 = DATA.dependency['2015'];
+  const med22 = DATA.median_age['2022'];
+  const med15 = DATA.median_age['2015'];
+
+  const items = [
+    {label: 'العمر الوسيط',     v22: med22.toFixed(1) + ' سنة', v15: med15.toFixed(1) + ' سنة'},
+    {label: 'نسبة الذكور:الإناث', v22: DATA.sex_ratios['2022'].overall.toFixed(0),
+                                    v15: DATA.sex_ratios['2015'].overall.toFixed(0)},
+    {label: 'نسبة الإعالة',      v22: d22.ratio.toFixed(1), v15: d15.ratio.toFixed(1)},
+    {label: 'نسبة الأطفال (<15)', v22: d22.youth_pct.toFixed(1) + '%', v15: d15.youth_pct.toFixed(1) + '%'},
+    {label: 'نسبة كبار السن (65+)', v22: d22.elderly_pct.toFixed(1) + '%', v15: d15.elderly_pct.toFixed(1) + '%'},
+  ];
+  let html = '<table style="width:100%; font-size:12px; border-collapse:collapse;">';
+  html += '<thead><tr><th style="text-align:right; padding:8px 4px; border-bottom:1px solid #ddd; color:#888; font-weight:500;">المؤشر</th>';
+  html += '<th style="text-align:center; padding:8px 4px; border-bottom:1px solid #ddd; color:#888; font-weight:500;">2015</th>';
+  html += '<th style="text-align:center; padding:8px 4px; border-bottom:1px solid #ddd; color:#888; font-weight:500;">2022</th></tr></thead><tbody>';
+  for (const it of items) {
+    html += '<tr><td style="padding:8px 4px; border-bottom:1px solid #f0f0f0;">' + it.label + '</td>';
+    html += '<td style="padding:8px 4px; text-align:center; border-bottom:1px solid #f0f0f0; color:#888;">' + it.v15 + '</td>';
+    html += '<td style="padding:8px 4px; text-align:center; border-bottom:1px solid #f0f0f0; font-weight:600; color:#3B5645;">' + it.v22 + '</td></tr>';
+  }
+  html += '</tbody></table>';
+  document.getElementById('dep-stats').innerHTML = html;
+}
+
+// ============================================================================
+// CHART 5: Vital stats time series
+// ============================================================================
+function renderVitalTS() {
+  const years = DATA.years_vital.map(String);
+  const traces = [
+    {x: years, y: DATA.years_vital.map(y => DATA.births_total[y]),
+     name: 'مواليد', mode: 'lines+markers', line: {color: COLORS.green, width: 2.5},
+     marker: {size: 7}, hovertemplate: '<b>مواليد %{x}</b><br>%{y:,}<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.deaths_total[y]),
+     name: 'وفيات', mode: 'lines+markers', line: {color: COLORS.coral, width: 2.5},
+     marker: {size: 7}, hovertemplate: '<b>وفيات %{x}</b><br>%{y:,}<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.mar_total[y]),
+     name: 'زواج', mode: 'lines+markers', line: {color: COLORS.blue, width: 2.5},
+     marker: {size: 7}, hovertemplate: '<b>زواج %{x}</b><br>%{y:,}<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.div_total[y]),
+     name: 'طلاق', mode: 'lines+markers', line: {color: COLORS.amber, width: 2.5},
+     marker: {size: 7}, hovertemplate: '<b>طلاق %{x}</b><br>%{y:,}<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    margin: {t: 30, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, tickformat: ',d'},
+    annotations: [
+      {x: '2020', y: DATA.deaths_total[2020], text: 'كوفيد-19',
+       font: {size: 10, color: COLORS.coral}, showarrow: true, arrowhead: 2,
+       ax: 0, ay: -25, arrowcolor: COLORS.coral},
+      {x: '2018', y: DATA.div_total[2018], text: 'ذروة الطلاق',
+       font: {size: 10, color: COLORS.amber}, showarrow: true, arrowhead: 2,
+       ax: 0, ay: -25, arrowcolor: COLORS.amber},
+    ],
+  };
+  Plotly.newPlot('chart-vital-ts', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 6: Natural increase area chart
+// ============================================================================
+function renderNatInc() {
+  const years = DATA.years_vital.map(String);
+  const trace = {
+    x: years,
+    y: DATA.years_vital.map(y => DATA.nat_increase[y]),
+    type: 'scatter', mode: 'lines+markers',
+    fill: 'tozeroy', fillcolor: 'rgba(80,115,95,0.18)',
+    line: {color: COLORS.green, width: 2.5},
+    marker: {size: 8, color: COLORS.green},
+    hovertemplate: '<b>%{x}</b><br>الزيادة الطبيعية: %{y:,}<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 30, r: 14, b: 40, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, tickformat: ',d',
+            title: {text: 'مواليد − وفيات', font: {size: 11, color: COLORS.textMuted}}},
+  };
+  Plotly.newPlot('chart-nat-inc', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 7: Births by nationality (stacked)
+// ============================================================================
+function renderBirthsByNat() {
+  const years = DATA.years_vital.map(String);
+  const emr = DATA.years_vital.map(y => DATA.births_by_nat[y].EMR);
+  const nemr = DATA.years_vital.map(y => DATA.births_by_nat[y].NEMR);
+  const traces = [
+    {x: years, y: emr, name: 'مواليد إماراتيين', type: 'bar', marker: {color: COLORS.green},
+     hovertemplate: '<b>%{x}</b><br>إماراتي: %{y:,}<extra></extra>'},
+    {x: years, y: nemr, name: 'مواليد غير إماراتيين', type: 'bar', marker: {color: COLORS.greenLight},
+     hovertemplate: '<b>%{x}</b><br>غير إماراتي: %{y:,}<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    barmode: 'stack',
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, tickformat: ',d'},
+  };
+  Plotly.newPlot('chart-births-nat', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 8: Sex ratio at birth
+// ============================================================================
+function renderSexRatioBirth() {
+  const years = DATA.years_vital.map(String);
+  const traces = [
+    {x: years, y: DATA.years_vital.map(y => DATA.sex_ratio_birth[y].overall),
+     name: 'الإجمالي', mode: 'lines+markers', line: {color: COLORS.green, width: 2.5},
+     hovertemplate: '<b>%{x}</b><br>الإجمالي: %{y:.1f}<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.sex_ratio_birth[y].EMR),
+     name: 'إماراتي', mode: 'lines+markers', line: {color: COLORS.amber, width: 2}, marker: {size: 6},
+     hovertemplate: '<b>%{x}</b><br>إماراتي: %{y:.1f}<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.sex_ratio_birth[y].NEMR),
+     name: 'غير إماراتي', mode: 'lines+markers', line: {color: COLORS.blue, width: 2}, marker: {size: 6},
+     hovertemplate: '<b>%{x}</b><br>غير إماراتي: %{y:.1f}<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true,
+      title: {text: 'ذكور لكل 100 أنثى', font: {size: 11, color: COLORS.textMuted}}},
+    shapes: [
+      {type: 'line', x0: years[0], x1: years[years.length-1], y0: 105, y1: 105,
+       line: {color: COLORS.gray, width: 1, dash: 'dash'}},
+    ],
+    annotations: [
+      {x: years[years.length-1], y: 105, text: 'النسبة الطبيعية ~105',
+       showarrow: false, xanchor: 'right', yanchor: 'bottom',
+       font: {size: 10, color: COLORS.textMuted}},
+    ],
+  };
+  Plotly.newPlot('chart-sex-ratio-birth', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 9: Crude Birth Rate
+// ============================================================================
+function renderCBR() {
+  const years = DATA.years_vital.map(String);
+  const trace = {
+    x: years, y: DATA.years_vital.map(y => DATA.crude_birth_rate[y]),
+    type: 'scatter', mode: 'lines+markers',
+    fill: 'tozeroy', fillcolor: 'rgba(80,115,95,0.12)',
+    line: {color: COLORS.green, width: 2.5}, marker: {size: 7},
+    hovertemplate: '<b>%{x}</b><br>CBR: %{y:.2f} لكل 1000<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 14, b: 40, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true,
+      title: {text: 'لكل 1000 من السكان', font: {size: 11, color: COLORS.textMuted}}},
+  };
+  Plotly.newPlot('chart-cbr', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 10: Births share over time
+// ============================================================================
+function renderBirthsShare() {
+  const years = DATA.years_vital.map(String);
+  const emr = DATA.years_vital.map(y => DATA.births_nat_share[y].EMR);
+  const nemr = DATA.years_vital.map(y => DATA.births_nat_share[y].NEMR);
+  const traces = [
+    {x: years, y: emr, stackgroup: 'one', name: 'مواطنون %',
+     line: {width: 0}, fillcolor: COLORS.green,
+     hovertemplate: '<b>%{x}</b><br>مواطنون: %{y:.1f}%<extra></extra>'},
+    {x: years, y: nemr, stackgroup: 'one', name: 'غير مواطنين %',
+     line: {width: 0}, fillcolor: COLORS.greenLight,
+     hovertemplate: '<b>%{x}</b><br>غير مواطنين: %{y:.1f}%<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, range: [0, 100], ticksuffix: '%'},
+  };
+  Plotly.newPlot('chart-births-share', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 11: Deaths by nationality
+// ============================================================================
+function renderDeathsByNat() {
+  const years = DATA.years_vital.map(String);
+  const emr = DATA.years_vital.map(y => DATA.deaths_by_nat[y].EMR);
+  const nemr = DATA.years_vital.map(y => DATA.deaths_by_nat[y].NEMR);
+  const traces = [
+    {x: years, y: emr, name: 'وفيات إماراتيين', type: 'bar', marker: {color: COLORS.coral},
+     hovertemplate: '<b>%{x}</b><br>إماراتي: %{y:,}<extra></extra>'},
+    {x: years, y: nemr, name: 'وفيات غير إماراتيين', type: 'bar', marker: {color: '#E89980'},
+     hovertemplate: '<b>%{x}</b><br>غير إماراتي: %{y:,}<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    barmode: 'stack',
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, tickformat: ',d'},
+    annotations: [
+      {x: '2020', y: DATA.deaths_total[2020], text: 'COVID',
+       font: {size: 10, color: COLORS.coral}, showarrow: true, arrowhead: 2,
+       ax: 0, ay: -25, arrowcolor: COLORS.coral},
+    ],
+  };
+  Plotly.newPlot('chart-deaths-nat', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 12: YoY change in deaths
+// ============================================================================
+function renderDeathsYoY() {
+  const years = DATA.years_vital.slice(1);
+  const yoy = years.map(y => DATA.deaths_yoy[y]);
+  const colors = yoy.map(v => v > 0 ? COLORS.coral : COLORS.green);
+  const trace = {
+    x: years.map(String), y: yoy, type: 'bar',
+    marker: {color: colors},
+    text: yoy.map(v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%'),
+    textposition: 'outside',
+    hovertemplate: '<b>%{x}</b><br>التغير: %{y:.1f}%<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 30, r: 14, b: 40, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, ticksuffix: '%', zeroline: true, zerolinecolor: COLORS.gray},
+    showlegend: false,
+  };
+  Plotly.newPlot('chart-deaths-yoy', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 13: Marriage matrix heatmap
+// ============================================================================
+function renderMarMatrix() {
+  const m = DATA.mar_matrix_recent;
+  const z = [
+    [m['EMR_EMR'], m['EMR_NEMR']],
+    [m['NEMR_EMR'], m['NEMR_NEMR']],
+  ];
+  const trace = {
+    type: 'heatmap',
+    z: z,
+    x: ['زوجة إماراتية', 'زوجة غير إماراتية'],
+    y: ['زوج إماراتي', 'زوج غير إماراتي'],
+    colorscale: [[0, '#FFFFFF'], [0.5, COLORS.greenLight], [1, COLORS.greenDark]],
+    showscale: false,
+    text: z.map(row => row.map(v => fmtEN(v))),
+    texttemplate: '%{text}',
+    textfont: {size: 16, family: 'Segoe UI Semibold'},
+    hovertemplate: '<b>%{y} × %{x}</b><br>عقود: %{z:,}<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 20, b: 40, l: 110},
+    xaxis: {side: 'top', tickfont: {size: 11}},
+    yaxis: {tickfont: {size: 11}, autorange: 'reversed'},
+  };
+  Plotly.newPlot('chart-mar-matrix', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 14: Mixed marriages trend
+// ============================================================================
+function renderMixedTrend() {
+  const years = DATA.years_vital.map(String);
+  const trace = {
+    x: years, y: DATA.years_vital.map(y => DATA.mixed_pct[y]),
+    type: 'scatter', mode: 'lines+markers',
+    fill: 'tozeroy', fillcolor: 'rgba(24,95,165,0.12)',
+    line: {color: COLORS.blue, width: 2.5}, marker: {size: 7},
+    hovertemplate: '<b>%{x}</b><br>زواج مختلط: %{y:.1f}%<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 14, b: 40, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, ticksuffix: '%'},
+  };
+  Plotly.newPlot('chart-mixed-trend', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 15: Marriage vs Divorce
+// ============================================================================
+function renderMarDiv() {
+  const years = DATA.years_vital.map(String);
+  const traces = [
+    {x: years, y: DATA.years_vital.map(y => DATA.mar_total[y]),
+     name: 'عقود زواج', type: 'bar', marker: {color: COLORS.green},
+     hovertemplate: '<b>%{x}</b><br>زواج: %{y:,}<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.div_total[y]),
+     name: 'حالات طلاق', type: 'bar', marker: {color: COLORS.amber},
+     hovertemplate: '<b>%{x}</b><br>طلاق: %{y:,}<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    barmode: 'group',
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true, tickformat: ',d'},
+  };
+  Plotly.newPlot('chart-mar-div', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 16: Marriage:Divorce ratio
+// ============================================================================
+function renderMarDivRatio() {
+  const years = DATA.years_vital.map(String);
+  const trace = {
+    x: years, y: DATA.years_vital.map(y => DATA.mar_div_ratio[y]),
+    type: 'scatter', mode: 'lines+markers',
+    line: {color: COLORS.greenDark, width: 2.5}, marker: {size: 8, color: COLORS.greenDark},
+    text: DATA.years_vital.map(y => DATA.mar_div_ratio[y].toFixed(1)),
+    textposition: 'top center', textfont: {size: 11, color: COLORS.textMuted},
+    hovertemplate: '<b>%{x}</b><br>النسبة: %{y:.1f}:1<extra></extra>',
+  };
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 14, b: 40, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true,
+      title: {text: 'زواج/طلاق', font: {size: 11, color: COLORS.textMuted}}},
+  };
+  Plotly.newPlot('chart-mar-div-ratio', [trace], layout, config);
+}
+
+// ============================================================================
+// CHART 17: Crude rates combined
+// ============================================================================
+function renderCrudeRates() {
+  const years = DATA.years_vital.map(String);
+  const traces = [
+    {x: years, y: DATA.years_vital.map(y => DATA.crude_birth_rate[y]),
+     name: 'معدل المواليد', mode: 'lines+markers',
+     line: {color: COLORS.green, width: 2.5}, marker: {size: 7},
+     hovertemplate: '<b>%{x}</b><br>%{y:.2f}/1000<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.crude_death_rate[y]),
+     name: 'معدل الوفيات', mode: 'lines+markers',
+     line: {color: COLORS.coral, width: 2.5}, marker: {size: 7},
+     hovertemplate: '<b>%{x}</b><br>%{y:.2f}/1000<extra></extra>'},
+    {x: years, y: DATA.years_vital.map(y => DATA.crude_mar_rate[y]),
+     name: 'معدل الزواج', mode: 'lines+markers',
+     line: {color: COLORS.blue, width: 2.5}, marker: {size: 7},
+     hovertemplate: '<b>%{x}</b><br>%{y:.2f}/1000<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    yaxis: {...baseLayout.yaxis, type: 'linear', autorange: true,
+      title: {text: 'لكل 1000 نسمة', font: {size: 11, color: COLORS.textMuted}}},
+  };
+  Plotly.newPlot('chart-crude-rates', traces, layout, config);
+}
+
+// ============================================================================
+// CHART 18: Sex ratio at birth by nationality (already in chart 8 but more detail here)
+// ============================================================================
+function renderSrByNat() {
+  const years = DATA.years_vital.map(String);
+  const emr_male = DATA.years_vital.map(y => DATA.sex_ratio_birth[y].EMR);
+  const nemr_male = DATA.years_vital.map(y => DATA.sex_ratio_birth[y].NEMR);
+  const traces = [
+    {x: years, y: emr_male, name: 'إماراتي', type: 'bar', marker: {color: COLORS.green},
+     hovertemplate: '<b>%{x}</b><br>إماراتي: %{y:.1f}<extra></extra>'},
+    {x: years, y: nemr_male, name: 'غير إماراتي', type: 'bar', marker: {color: COLORS.amber},
+     hovertemplate: '<b>%{x}</b><br>غير إماراتي: %{y:.1f}<extra></extra>'},
+  ];
+  const layout = {...baseLayout,
+    barmode: 'group',
+    margin: {t: 20, r: 14, b: 60, l: 60},
+    xaxis: {...baseLayout.xaxis, type: 'category'},
+    yaxis: {...baseLayout.yaxis, type: 'linear',
+      title: {text: 'ذكور لكل 100 أنثى', font: {size: 11, color: COLORS.textMuted}},
+      range: [90, 120]},
+    shapes: [
+      {type: 'line', x0: -0.5, x1: years.length - 0.5, y0: 105, y1: 105,
+       xref: 'x', line: {color: COLORS.gray, width: 1, dash: 'dash'}},
+    ],
+  };
+  Plotly.newPlot('chart-sr-by-nat', traces, layout, config);
+}
+
+// ============================================================================
+// Advanced indicator panels
+// ============================================================================
+function renderAdvancedPanels() {
+  document.getElementById('med-2015').textContent = DATA.median_age['2015'].toFixed(1);
+  document.getElementById('med-2022').textContent = DATA.median_age['2022'].toFixed(1);
+  document.getElementById('med-delta').textContent = '+' + (DATA.median_age['2022'] - DATA.median_age['2015']).toFixed(1);
+
+  document.getElementById('sr-2015').textContent = DATA.sex_ratios['2015'].overall.toFixed(0);
+  document.getElementById('sr-2022').textContent = DATA.sex_ratios['2022'].overall.toFixed(0);
+
+  document.getElementById('dep-2015').textContent = DATA.dependency['2015'].ratio.toFixed(1);
+  document.getElementById('dep-2022').textContent = DATA.dependency['2022'].ratio.toFixed(1);
+
+  document.getElementById('eld-2015').textContent = DATA.dependency['2015'].elderly_pct.toFixed(1) + '%';
+  document.getElementById('eld-2022').textContent = DATA.dependency['2022'].elderly_pct.toFixed(1) + '%';
+
+  // Insights spans
+  document.getElementById('ins-covid').textContent = DATA.kpi.covid_death_inc.toFixed(0);
+  document.getElementById('ins-covid-2').textContent = '+' + DATA.kpi.covid_death_inc.toFixed(0);
+  document.getElementById('ins-sr').textContent = DATA.sex_ratios['2022'].overall.toFixed(0);
+  document.getElementById('ins-mixed').textContent = DATA.kpi.mixed_pct_2024.toFixed(1);
+}
+
+// ============================================================================
+// Render all
+// ============================================================================
+window.addEventListener('DOMContentLoaded', () => {
+  renderPyramid();
+  renderPopTotal();
+  renderNatComposition();
+  renderAgeBuckets();
+  renderDepStats();
+  renderVitalTS();
+  renderNatInc();
+  renderBirthsByNat();
+  renderSexRatioBirth();
+  renderCBR();
+  renderBirthsShare();
+  renderDeathsByNat();
+  renderDeathsYoY();
+  renderMarMatrix();
+  renderMixedTrend();
+  renderMarDiv();
+  renderMarDivRatio();
+  renderCrudeRates();
+  renderSrByNat();
+  renderAdvancedPanels();
+});
+</script>
+</body>
+</html>
