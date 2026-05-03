@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>اللوحة التحليلية - الإحصاءات السكانية لإمارة الشارقة</title>
+<title>الداشبورد التحليلية - الإحصاءات السكانية لإمارة الشارقة</title>
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 <style>
 :root {
@@ -37,6 +37,7 @@ body {
 
 /* HEADER */
 header {
+  position: relative;
   background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
   color: #fff;
   padding: 32px 0;
@@ -65,6 +66,40 @@ header .meta {
   flex-wrap: wrap;
 }
 header .meta span::before { content: "● "; opacity: 0.7; }
+
+
+.header-action-btn {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--green-dark);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+  border: 1px solid rgba(255,255,255,0.7);
+  transition: all 0.2s ease;
+}
+.header-action-btn:hover {
+  transform: translateY(-1px);
+  background: var(--green-50);
+  color: var(--green-dark);
+}
+@media (max-width: 700px) {
+  .header-action-btn {
+    position: static;
+    margin: 0 20px 16px auto;
+    width: fit-content;
+  }
+}
 
 /* SECTIONS */
 .section { margin-bottom: 36px; }
@@ -267,6 +302,10 @@ footer .sources { margin-top: 8px; opacity: 0.8; }
 <body>
 
 <header>
+  <a class="header-action-btn" href="https://app.powerbi.com/groups/me/reports/0b973b7f-deaf-4a36-a0b5-ee245890b376/336abc66170e3573b897?ctid=5b51251a-a0ed-4d65-958a-cfa7983848cc&experience=power-bi&bookmarkGuid=3a32963a-dabf-4c81-8589-09693357c58a" target="_blank" rel="noopener noreferrer">
+    SDH HOME ↗
+  </a>
+
   <div class="container">
     <h1>اللوحة التحليلية للإحصاءات السكانية</h1>
     <h2>إمارة الشارقة • تحليل متكامل للمؤشرات الديموغرافية والحركة السكانية</h2>
